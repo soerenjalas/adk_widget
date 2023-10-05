@@ -56,7 +56,9 @@ fig = px.bar(
 fig.update_yaxes(exponentformat="power")
 # Customize the y-axis scale
 #fig.update_yaxes(type="log", title="appearance intensity (W/cm^2)")
-fig.update_yaxes(type="log", title="appearance intensity (a0 @ 800nm)")
+fig.update_yaxes(title="appearance intensity (a0 @ 800nm)")
+# ylimit
+fig.update_yaxes(range=[0, 10])
 
 # add horizontal lines
 # a0 = 1
