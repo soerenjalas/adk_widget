@@ -47,15 +47,20 @@ colors = px.colors.sequential.YlGnBu
 fig = px.bar(
     ionization_data,
     x="element",
-    y="I_app",
+    y="a0 (800nm)",
     color="element",
     hover_data=["element", "name", "a0 (800nm)", "q", "W_ion", "Z"],
     color_continuous_scale=colors,
-    barmode="relative",
+    barmode="stack",
 )
 fig.update_yaxes(exponentformat="power")
 # Customize the y-axis scale
-fig.update_yaxes(type="log", title="appearance intensity (W/cm^2)")
+#fig.update_yaxes(type="log", title="appearance intensity (W/cm^2)")
+fig.update_yaxes(type="log", title="appearance intensity (a0 @ 800nm)")
 
+# add horizontal lines
+# a0 = 1
+#fig.add_hline(y=1, line_width=1, line_dash="dash", line_color="black", annotation="Threshold")
 
+#fig.show()
 pyo.plot(fig, filename="docs/index.html", auto_open=False)
