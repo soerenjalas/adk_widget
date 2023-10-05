@@ -49,7 +49,7 @@ fig = px.bar(
     x="element",
     y="a0 (800nm)",
     color="element",
-    hover_data=["element", "name", "a0 (800nm)", "q", "W_ion", "Z"],
+    hover_data=["element", "name","I_app", "a0 (800nm)", "q", "W_ion", "Z"],
     color_continuous_scale=colors,
     barmode="overlay",
 )
