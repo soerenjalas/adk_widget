@@ -51,7 +51,7 @@ fig = px.bar(
     color="element",
     hover_data=["element", "name", "a0 (800nm)", "q", "W_ion", "Z"],
     color_continuous_scale=colors,
-    barmode="stack",
+    barmode="overlay",
 )
 fig.update_yaxes(exponentformat="power")
 # Customize the y-axis scale
