@@ -37,7 +37,7 @@ colors = px.colors.sequential.YlGnBu
 
 
 fig = px.bar(ionization_data, x='element', y='I_app', color='element',
-             hover_data=['element', 'name', 'a0'],
+             hover_data=['element', 'name', 'a0', 'q', 'W_ion', 'Z'],
              color_continuous_scale=colors, barmode='relative')
 fig.update_yaxes(exponentformat="power")
 # Customize the y-axis scale
