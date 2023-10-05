@@ -29,7 +29,7 @@ ionization_data["I_app"] = iapp(ionization_data.W_ion, ionization_data.Z)
 ionization_data["element"] = ionization_data.name.map(
     lambda x: x.lstrip().split(" ")[0]
 )
-ionization_data["a0"] = ionization_data.I_app.map(a0)
+ionization_data["a0 (800nm)"] = ionization_data.I_app.map(a0)
 
 grps = ionization_data.groupby("Z")
 
@@ -49,7 +49,7 @@ fig = px.bar(
     x="element",
     y="I_app",
     color="element",
-    hover_data=["element", "name", "a0", "q", "W_ion", "Z"],
+    hover_data=["element", "name", "a0 (800nm)", "q", "W_ion", "Z"],
     color_continuous_scale=colors,
     barmode="relative",
 )
