@@ -8,8 +8,11 @@ def iapp(e_ion, z):
     return 4e9 * e_ion**4 / z**2
 
 
-def a0(x):
-    return np.sqrt(7.3e-19 * 0.8**2 * x)
+def a0(wavelength):
+    def a0_x(x):
+        return np.sqrt(7.3e-19 * wavelength**2 * x)
+
+    return a0_x
 
 
 def e_converter(x):
@@ -29,7 +32,8 @@ ionization_data["I_app"] = iapp(ionization_data.W_ion, ionization_data.Z)
 ionization_data["element"] = ionization_data.name.map(
     lambda x: x.lstrip().split(" ")[0]
 )
-ionization_data["a0 (800nm)"] = ionization_data.I_app.map(a0)
+ionization_data["a0 (800nm)"] = ionization_data.I_app.map(a0(0.8))
+ionization_data["a0 (1030nm)"] = ionization_data.I_app.map(a0(1.03))
 
 grps = ionization_data.groupby("Z")
 
@@ -44,31 +48,120 @@ group_width = 1
 colors = px.colors.sequential.YlGnBu
 
 
-fig = px.bar(
-    ionization_data,
-    x="element",
-    y="a0 (800nm)",
-    color="element",
-    #hover_data=["element", "name","I_app", "a0 (800nm)", "q", "W_ion", "Z"],
-    hover_name="name",
-    hover_data={'I_app': ':.2e', 'a0 (800nm)': ':.2f', 'W_ion': ':.2f'},
-    color_discrete_sequence=px.colors.qualitative.Prism,
-    barmode="overlay",
-    opacity=0.5,
-    template="plotly_white",
-)
-fig.update_yaxes(exponentformat="power")
-# Customize the y-axis scale
-#fig.update_yaxes(type="log", title="appearance intensity (W/cm^2)")
-fig.update_yaxes(title="appearance intensity (a0 @ 800nm)")
-fig.update_yaxes(showspikes=True, spikecolor="orange", spikethickness=2)
-# ylimit
-fig.update_yaxes(range=[0, 10])
+# Create a function to generate the plot based on the selected parameter
+def generate_plot(parameter):
+    if parameter == "a0_800":
+        y_column = "a0 (800nm)"
+        y_title = "appearance intensity (a0 @ 800nm)"
+    elif parameter == "a0_1030":
+        y_column = "a0 (1030nm)"
+        y_title = "appearance intensity (a0 @ 1030nm)"
+    elif parameter == "intensity":
+        y_column = "I_app"
+        y_title = "Intensity (W/cm^2)"
+    else:
+        raise ValueError("Invalid parameter")
+
+    fig = px.bar(
+        ionization_data,
+        x="element",
+        y=y_column,
+        color="element",
+        hover_name="name",
+        hover_data={
+            "I_app": ":.2e",
+            "a0 (1030nm)": ":.2f",
+            "a0 (800nm)": ":.2f",
+            "W_ion": ":.2f",
+        },
+        color_discrete_sequence=px.colors.qualitative.Prism,
+        barmode="overlay",
+        opacity=0.5,
+        template="plotly_white",
+    )
+    fig.update_yaxes(exponentformat="e")
+    fig.update_yaxes(title=y_title)
+    fig.update_yaxes(showspikes=True, spikecolor="orange", spikethickness=2)
+    if parameter in ["a0_800", "a0_1030"]:
+        fig.update_yaxes(range=[0, 10])
+    elif parameter == "intensity":
+        # log scale
+        fig.update_yaxes(type="log")
+    pyo.plot(
+        fig, filename=f"docs/index_{parameter.replace(' ', '_')}.html", auto_open=False
+    )
+
+    dropdown_menu = """
+    <div class="dropdown">
+        <button onclick="toggleDropdown()" class="dropbtn">Choose Plot</button>
+        <div id="dropdown-content" class="dropdown-content">
+            <a href="index_a0_800.html">a0 (800nm)</a>
+            <a href="index_a0_1030.html">a0 (1030nm)</a>
+            <a href="index_intensity.html">Intensity</a>
+        </div>
+    </div>
+    <script>
+        function toggleDropdown() {
+            var dropdown = document.getElementById("dropdown-content");
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+            }
+        }
+    </script>
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            left: 0;
+        }
+        .dropdown-content a {
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-family: "Roboto", sans-serif; /* Change the font here */
+        }
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+    </style>
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap">
+    """
+
+    # Embed the dropdown menu in the HTML file
+    html_content = f"""
+    <html>
+    <head>
+        <title>Plot: {parameter}</title>
+    </head>
+    <body>
+        {dropdown_menu}
+        {fig.to_html()}
+    </body>
+    </html>
+    """
+
+    with open(f"docs/index_{parameter.replace(' ', '_')}.html", "w") as f:
+        f.write(html_content)
 
 
-# add horizontal lines
-# a0 = 1
-#fig.add_hline(y=1, line_width=1, line_dash="dash", line_color="black", annotation="Threshold")
-
-#fig.show()
-pyo.plot(fig, filename="docs/index.html", auto_open=False)
+# Generate the three versions of the plot
+generate_plot("a0_800")
+generate_plot("a0_1030")
+generate_plot("intensity")
