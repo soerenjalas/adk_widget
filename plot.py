@@ -49,16 +49,22 @@ fig = px.bar(
     x="element",
     y="a0 (800nm)",
     color="element",
-    hover_data=["element", "name","I_app", "a0 (800nm)", "q", "W_ion", "Z"],
-    color_continuous_scale=colors,
+    #hover_data=["element", "name","I_app", "a0 (800nm)", "q", "W_ion", "Z"],
+    hover_name="name",
+    hover_data={'I_app': ':.2e', 'a0 (800nm)': ':.2f', 'W_ion': ':.2f'},
+    color_discrete_sequence=px.colors.qualitative.Prism,
     barmode="overlay",
+    opacity=0.5,
+    template="plotly_white",
 )
 fig.update_yaxes(exponentformat="power")
 # Customize the y-axis scale
 #fig.update_yaxes(type="log", title="appearance intensity (W/cm^2)")
 fig.update_yaxes(title="appearance intensity (a0 @ 800nm)")
+fig.update_yaxes(showspikes=True, spikecolor="orange", spikethickness=2)
 # ylimit
 fig.update_yaxes(range=[0, 10])
+
 
 # add horizontal lines
 # a0 = 1
