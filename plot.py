@@ -28,7 +28,7 @@ ionization_data = pd.read_csv(
     # dtype={'W_ion':float}
 )
 ionization_data.W_ion = ionization_data.W_ion.astype(float)
-ionization_data["I_app"] = iapp(ionization_data.W_ion, ionization_data.Z)
+ionization_data["I_app"] = iapp(ionization_data.W_ion, ionization_data.q+1)
 ionization_data["element"] = ionization_data.name.map(
     lambda x: x.lstrip().split(" ")[0]
 )
