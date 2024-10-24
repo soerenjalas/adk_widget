@@ -14,7 +14,7 @@ def a0(wavelength):
     return a0_x
 
 def kinE(a0, z):
-    return 0.5 * 9.1e-31 * a0**2 * 3.0e8**2 /1.6e-19/z**2
+    return 0.5 * 9.1e-31 * a0**2 * 3.0e8**2 /1.6e-19
 
 def e_converter(x):
     return x.strip().replace("(", "").replace(")", "").replace("[", "").replace("]", "")
