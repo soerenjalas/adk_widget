@@ -11,9 +11,10 @@ def iapp(e_ion, z):
 def a0(wavelength):
     def a0_x(x):
         return np.sqrt(7.3e-19 * wavelength**2 * x)
-
     return a0_x
 
+def kinE(a0, z):
+    return 0.5 * 9.1e-31 * a0**2 * 3.0e8**2 /1.6e-19
 
 def e_converter(x):
     return x.strip().replace("(", "").replace(")", "").replace("[", "").replace("]", "")
@@ -34,6 +35,8 @@ ionization_data["element"] = ionization_data.name.map(
 )
 ionization_data["a0 (800nm)"] = ionization_data.I_app.map(a0(0.8))
 ionization_data["a0 (1030nm)"] = ionization_data.I_app.map(a0(1.03))
+ionization_data["Ekin (800nm)"] = kinE(a0(0.8)((ionization_data.I_app)),ionization_data.q+1)
+ionization_data["Ekin (1030nm)"] = kinE(a0(1.03)((ionization_data.I_app)),ionization_data.q+1)
 
 grps = ionization_data.groupby("Z")
 
@@ -73,6 +76,8 @@ def generate_plot(parameter):
             "a0 (1030nm)": ":.2f",
             "a0 (800nm)": ":.2f",
             "W_ion": ":.2f",
+            "Ekin (1030nm)": ":.2f",
+            "Ekin (800nm)": ":.2f",
         },
         color_discrete_sequence=px.colors.qualitative.Prism,
         barmode="overlay",
